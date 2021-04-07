@@ -6,6 +6,7 @@ agent:
     os_image: ubuntu1804
 blocks:
   - name: Test
+    dependencies: []
     task:
       jobs:
         - name: go test
