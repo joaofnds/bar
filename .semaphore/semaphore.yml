@@ -16,4 +16,22 @@ blocks:
             - make test
       env_vars:
         - name: GO111MODULE
-          value: 'on'
+          value: "on"
+  - name: Release
+    dependencies:
+      - Test
+    task:
+      env_vars: []
+      jobs:
+        - name: generate release
+          commands:
+            - npm install --global release-it
+            - npx release-it --ci
+      prologue:
+        commands:
+          - git config --global user.email "semaphoreci@joaofnds.com"
+          - git config --global user.name "semaphoreci"
+          - checkout
+          - git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/$SEMAPHORE_GIT_REPO_SLUG
+      secrets:
+        - name: GITHUB_TOKEN
