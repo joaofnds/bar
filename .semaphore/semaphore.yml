@@ -5,7 +5,7 @@ agent:
     type: e1-standard-2
     os_image: ubuntu1804
 blocks:
-  - name: Test
+  - name: test
     dependencies: []
     task:
       jobs:
@@ -17,10 +17,12 @@ blocks:
             - make test
       env_vars:
         - name: GO111MODULE
-          value: "on"
-  - name: Release
+          value: 'on'
+    run:
+      when: branch = 'main' or branch = 'staging'
+  - name: release
     dependencies:
-      - Test
+      - test
     task:
       env_vars: []
       jobs:
@@ -32,3 +34,15 @@ blocks:
             - npx semantic-release
       secrets:
         - name: GITHUB_TOKEN
+    run:
+      when: branch = 'main' or branch = 'staging'
+  - name: build image
+    dependencies: []
+    run:
+      when: tag =~ '.*'
+    task:
+      jobs:
+        - name: docker build
+          commands:
+            - checkout
+            - 'docker build -t joaofnds/bar:$SEMAPHORE_GIT_TAG_NAME .'
