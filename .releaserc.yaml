@@ -1,7 +1,7 @@
 branches:
   - main
-  - name: develop
-    channel: develop
+  - name: staging
+    channel: staging
     prerelease: dev
 
 tagFormat: "${version}"
