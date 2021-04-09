@@ -45,6 +45,7 @@ blocks:
         - name: docker build
           commands:
             - checkout
+            - echo $DOCKERHUB_PASSWORD | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
             - 'docker build -t joaofnds/bar:$SEMAPHORE_GIT_TAG_NAME .'
             - 'docker push joaofnds/bar:$SEMAPHORE_GIT_TAG_NAME'
       secrets:
