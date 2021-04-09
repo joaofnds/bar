@@ -46,3 +46,6 @@ blocks:
           commands:
             - checkout
             - 'docker build -t joaofnds/bar:$SEMAPHORE_GIT_TAG_NAME .'
+            - 'docker push joaofnds/bar:$SEMAPHORE_GIT_TAG_NAME'
+      secrets:
+        - name: docker-login
