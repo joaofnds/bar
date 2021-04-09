@@ -3,59 +3,49 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/joaofnds/bar/foo"
-	"github.com/joaofnds/bar/logger"
 )
 
 func main() {
-	logger.InfoLogger().Println("Starting the application...")
+	log.Println("Starting the application...")
 
-	http.HandleFunc("/", rootHandler)
-	http.HandleFunc("/health", healthHandler)
+	var host string
 
-	s := http.Server{Addr: ":3000"}
+	if hostname, err := os.Hostname(); err == nil {
+		host = hostname
+	} else {
+		host = "some server"
+	}
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if response, err := foo.CallFoo(); err != nil {
+			log.Println(err)
+			fmt.Fprintln(w, "Hello from "+host+", I failed to contact foo service")
+		} else {
+			fmt.Fprintln(w, "Hello from "+host+", here's what foo service said: "+response)
+		}
+	})
+
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+	})
+
+	s := http.Server{Addr: ":80"}
 	go func() {
-		logger.ErrorLogger().Fatal(s.ListenAndServe())
+		log.Fatal(s.ListenAndServe())
 	}()
 
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 	<-signalChan
 
-	logger.InfoLogger().Println("Shutdown signal received, exiting...")
+	log.Println("Shutdown signal received, exiting...")
 
 	s.Shutdown(context.Background())
-}
-
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	defer trackTime(time.Now(), "rootHandler")
-	logger.InfoLogger().Printf("started rootHandler: %v\n", r.URL)
-
-	host, _ := os.Hostname()
-
-	response, err := foo.CallFoo()
-	if err != nil {
-		logger.ErrorLogger().Printf("failed to call foo service: %+v\n", err)
-		fmt.Fprintln(w, "Hello from "+host+", I failed to contact foo service")
-
-		return
-	}
-
-	fmt.Fprintln(w, "Hello from "+host+", here's what foo service said: "+response)
-}
-
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	defer trackTime(time.Now(), "healthHandler")
-	w.WriteHeader(200)
-}
-
-func trackTime(start time.Time, funcName string) {
-	elapsed := time.Since(start)
-	logger.InfoLogger().Printf("finished %s in %s\n", funcName, elapsed)
 }
