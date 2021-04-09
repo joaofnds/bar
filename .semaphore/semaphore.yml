@@ -26,13 +26,9 @@ blocks:
       jobs:
         - name: generate release
           commands:
-            - npm install --global release-it
-            - npx release-it --ci
-      prologue:
-        commands:
-          - git config --global user.email "semaphoreci@joaofnds.com"
-          - git config --global user.name "semaphoreci"
-          - checkout
-          - git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/$SEMAPHORE_GIT_REPO_SLUG
+            - checkout
+            - sem-version node 14
+            - npm install --global semantic-release@17
+            - npx semantic-release
       secrets:
         - name: GITHUB_TOKEN
