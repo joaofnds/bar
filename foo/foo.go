@@ -1,6 +1,7 @@
 package foo
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -8,6 +9,8 @@ import (
 	"time"
 
 	"github.com/joaofnds/bar/logger"
+	"github.com/joaofnds/bar/tracing"
+	"github.com/opentracing/opentracing-go"
 )
 
 var (
@@ -23,15 +26,18 @@ func init() {
 }
 
 // CallFoo calls the foo service
-func CallFoo() (string, error) {
+func CallFoo(ctx context.Context) (string, error) {
 	client := http.Client{Timeout: 5 * time.Second}
+	req, err := http.NewRequest("GET", FOO_SERVICE_URL, nil)
+	if err != nil {
+		logger.ErrorLogger().Println("failed to build request, url: " + FOO_SERVICE_URL)
+		return "", err
+	}
 
-	start := time.Now()
-
-	resp, err := client.Get(FOO_SERVICE_URL)
-
-	elapsed := time.Since(start)
-	logger.InfoLogger().Printf("finished foo service call in %s", elapsed)
+	span, _ := opentracing.StartSpanFromContext(ctx, "GET "+FOO_SERVICE_URL)
+	tracing.InjectRequestSpan(span, req)
+	resp, err := client.Do(req)
+	span.Finish()
 
 	if err != nil {
 		logger.ErrorLogger().Printf("failed to read body: %+v\n", err)

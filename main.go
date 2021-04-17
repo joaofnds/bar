@@ -7,14 +7,19 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/joaofnds/bar/foo"
 	"github.com/joaofnds/bar/logger"
+	"github.com/joaofnds/bar/tracing"
+	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
 	logger.InfoLogger().Println("Starting the application...")
+
+	host, _ := os.Hostname()
+	closer := tracing.InitTracer(host)
+	defer closer.Close()
 
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/health", healthHandler)
@@ -34,12 +39,17 @@ func main() {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	defer trackTime(time.Now(), "rootHandler")
 	logger.InfoLogger().Printf("started rootHandler: %v\n", r.URL)
+
+	tracer := opentracing.GlobalTracer()
+	span := tracing.StartSpanFromRequest("healthHandler", tracer, r)
+	defer span.Finish()
+
+	ctx := opentracing.ContextWithSpan(context.Background(), span)
 
 	host, _ := os.Hostname()
 
-	response, err := foo.CallFoo()
+	response, err := foo.CallFoo(ctx)
 	if err != nil {
 		logger.ErrorLogger().Printf("failed to call foo service: %+v\n", err)
 		fmt.Fprintln(w, "Hello from "+host+", I failed to contact foo service")
@@ -51,11 +61,9 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	defer trackTime(time.Now(), "healthHandler")
-	w.WriteHeader(200)
-}
+	tracer := opentracing.GlobalTracer()
+	span := tracing.StartSpanFromRequest("healthHandler", tracer, r)
+	defer span.Finish()
 
-func trackTime(start time.Time, funcName string) {
-	elapsed := time.Since(start)
-	logger.InfoLogger().Printf("finished %s in %s\n", funcName, elapsed)
+	w.WriteHeader(200)
 }
