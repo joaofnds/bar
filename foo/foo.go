@@ -34,7 +34,8 @@ func CallFoo(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	span, _ := opentracing.StartSpanFromContext(ctx, "GET "+FOO_SERVICE_URL)
+	parentSpan := opentracing.SpanFromContext(ctx)
+	span := opentracing.StartSpan("GET "+FOO_SERVICE_URL, opentracing.ChildOf(parentSpan.Context()))
 	tracing.InjectRequestSpan(span, req)
 	resp, err := client.Do(req)
 	span.Finish()

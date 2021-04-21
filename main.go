@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/joaofnds/bar/config"
 	"github.com/joaofnds/bar/foo"
 	"github.com/joaofnds/bar/logger"
 	"github.com/joaofnds/bar/tracing"
@@ -15,6 +16,11 @@ import (
 )
 
 func main() {
+	err := config.Parse()
+	if err != nil {
+		logger.ErrorLogger().Fatalf("failed to parse config: %v\n", err)
+	}
+
 	logger.InfoLogger().Println("Starting the application...")
 
 	host, _ := os.Hostname()
@@ -39,10 +45,7 @@ func main() {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	logger.InfoLogger().Printf("started rootHandler: %v\n", r.URL)
-
-	tracer := opentracing.GlobalTracer()
-	span := tracing.StartSpanFromRequest("healthHandler", tracer, r)
+	span := tracing.StartSpanFromReq("rootHandler", opentracing.GlobalTracer(), r)
 	defer span.Finish()
 
 	ctx := opentracing.ContextWithSpan(context.Background(), span)
@@ -61,8 +64,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	tracer := opentracing.GlobalTracer()
-	span := tracing.StartSpanFromRequest("healthHandler", tracer, r)
+	span := tracing.StartSpanFromReq("healthHandler", opentracing.GlobalTracer(), r)
 	defer span.Finish()
 
 	w.WriteHeader(200)
