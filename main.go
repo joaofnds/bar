@@ -30,7 +30,7 @@ func main() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/health", healthHandler)
 
-	s := http.Server{Addr: ":3000"}
+	s := http.Server{Addr: ":80"}
 	go func() {
 		logger.ErrorLogger().Fatal(s.ListenAndServe())
 	}()
