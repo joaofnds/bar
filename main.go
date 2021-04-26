@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/joaofnds/bar/config"
-	"github.com/joaofnds/bar/foo"
+	"github.com/joaofnds/bar/foo_client"
 	"github.com/joaofnds/bar/logger"
 	"github.com/joaofnds/bar/tracing"
 	"github.com/opentracing/opentracing-go"
@@ -52,7 +52,8 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 	host, _ := os.Hostname()
 
-	response, err := foo.CallFoo(ctx)
+	fooService := foo_client.NewFooClient(config.FooServiceEndpoint(), 0)
+	response, err := fooService.CallFoo(ctx)
 	if err != nil {
 		logger.ErrorLogger().Printf("failed to call foo service: %+v\n", err)
 		fmt.Fprintln(w, "Hello from "+host+", I failed to contact foo service")
