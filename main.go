@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,7 +11,6 @@ import (
 	"github.com/joaofnds/bar/foo_client"
 	"github.com/joaofnds/bar/logger"
 	"github.com/joaofnds/bar/tracing"
-	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
@@ -27,7 +25,10 @@ func main() {
 	closer := tracing.InitTracer(host)
 	defer closer.Close()
 
-	http.HandleFunc("/", rootHandler)
+	fooService := foo_client.NewFooClient(config.FooServiceEndpoint(), 0)
+	serviceName := config.ServiceName()
+
+	http.HandleFunc("/", newFoohandler(serviceName, fooService))
 	http.HandleFunc("/health", healthHandler)
 
 	s := http.Server{Addr: ":80"}
@@ -42,31 +43,4 @@ func main() {
 	logger.InfoLogger().Println("Shutdown signal received, exiting...")
 
 	s.Shutdown(context.Background())
-}
-
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	span := tracing.StartSpanFromReq("rootHandler", opentracing.GlobalTracer(), r)
-	defer span.Finish()
-
-	ctx := opentracing.ContextWithSpan(context.Background(), span)
-
-	host, _ := os.Hostname()
-
-	fooService := foo_client.NewFooClient(config.FooServiceEndpoint(), 0)
-	response, err := fooService.CallFoo(ctx)
-	if err != nil {
-		logger.ErrorLogger().Printf("failed to call foo service: %+v\n", err)
-		fmt.Fprintln(w, "Hello from "+host+", I failed to contact foo service")
-
-		return
-	}
-
-	fmt.Fprintln(w, "Hello from "+host+", here's what foo service said: "+response)
-}
-
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	span := tracing.StartSpanFromReq("healthHandler", opentracing.GlobalTracer(), r)
-	defer span.Finish()
-
-	w.WriteHeader(200)
 }

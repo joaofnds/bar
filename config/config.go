@@ -15,3 +15,12 @@ func JaegerCollectorEndpoint() string {
 func FooServiceEndpoint() string {
 	return os.Getenv("FOO_SERVICE_URL")
 }
+
+func ServiceName() string {
+	host, err := os.Hostname()
+	if err != nil {
+		return "this os doesn't like the 'kern.hostname' syscall"
+	}
+
+	return host
+}
