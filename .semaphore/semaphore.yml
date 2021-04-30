@@ -30,7 +30,7 @@ blocks:
           commands:
             - checkout
             - sem-version node 14
-            - npm install --global semantic-release@17
+            - npm install --global semantic-release@17 @semantic-release/changelog @semantic-release/git
             - npx semantic-release
       secrets:
         - name: GITHUB_TOKEN
