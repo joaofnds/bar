@@ -110,7 +110,7 @@ func Test_newFooHandlerWhenServiceFails(t *testing.T) {
 				t.Fatalf("failed to read body: %v", err)
 			}
 
-			expectedResponse := fmt.Sprintf("Hello from %s, I failed to contact foo service", tc.name)
+			expectedResponse := fmt.Sprintf("Hello from super %s, I failed to contact foo service", tc.name)
 
 			if string(b) != expectedResponse {
 				t.Fatalf("expected response to be %q, but got: %q", expectedResponse, b)
