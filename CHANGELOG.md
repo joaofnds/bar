@@ -1,3 +1,15 @@
+# [0.3.0-dev.2](https://github.com/joaofnds/bar/compare/0.3.0-dev.1...0.3.0-dev.2) (2021-05-03)
+
+
+### Features
+
+* add square brackets around hostname ([b098c16](https://github.com/joaofnds/bar/commit/b098c16bf8a14aaa5f242bd94978da3194ce0a0f))
+
+
+### Reverts
+
+* remove "super" ([d3bcb07](https://github.com/joaofnds/bar/commit/d3bcb0753b5375b548ba5aad62a851483bfa5e06))
+
 # [0.3.0-dev.1](https://github.com/joaofnds/bar/compare/0.2.0...0.3.0-dev.1) (2021-05-03)
 
 
