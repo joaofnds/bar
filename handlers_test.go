@@ -69,7 +69,7 @@ func Test_newFooHandler(t *testing.T) {
 				t.Fatalf("failed to read body: %v", err)
 			}
 
-			expectedResponse := fmt.Sprintf("Hello from %s, here's what foo service said: %s", tc.name, tc.fooResponse)
+			expectedResponse := fmt.Sprintf("Hello from [%s], here's what foo service said: %s", tc.name, tc.fooResponse)
 
 			if string(b) != expectedResponse {
 				t.Fatalf("expected response to be %q, but got: %q", expectedResponse, b)
