@@ -29,7 +29,7 @@ func newFoohandler(name string, fooCaller fooCaller) http.HandlerFunc {
 			return
 		}
 
-		fmt.Fprint(w, "Hello from "+name+", here's what foo service said: "+response)
+		fmt.Fprint(w, "Hello from ["+name+"], here's what foo service said: "+response)
 	}
 }
 
