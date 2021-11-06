@@ -1,3 +1,22 @@
+# [0.3.0](https://github.com/joaofnds/bar/compare/0.2.0...0.3.0) (2021-11-06)
+
+
+### Bug Fixes
+
+* **ci:** fix yaml format ([30a5a12](https://github.com/joaofnds/bar/commit/30a5a12e34e2d6df687f994cb58d9f92c7a86380))
+* **test:** oops ([5993c24](https://github.com/joaofnds/bar/commit/5993c2428b45f72fbd1a195c3a12487f585b045f))
+
+
+### Features
+
+* add square brackets around hostname ([b098c16](https://github.com/joaofnds/bar/commit/b098c16bf8a14aaa5f242bd94978da3194ce0a0f))
+* add super helpful message ([8159ee1](https://github.com/joaofnds/bar/commit/8159ee19bb10f0417ff85ee82f4ed7240e9053e2))
+
+
+### Reverts
+
+* remove "super" ([d3bcb07](https://github.com/joaofnds/bar/commit/d3bcb0753b5375b548ba5aad62a851483bfa5e06))
+
 # [0.3.0-dev.2](https://github.com/joaofnds/bar/compare/0.3.0-dev.1...0.3.0-dev.2) (2021-05-03)
 
 
