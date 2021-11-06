@@ -1,0 +1,35 @@
+name: test and release
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install deps
+        run: make install-deps
+
+      - name: test
+        run: make test
+
+  release:
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: npm install --global semantic-release @semantic-release/changelog @semantic-release/git
+
+      - name: generate release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
