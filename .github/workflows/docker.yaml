@@ -1,10 +1,8 @@
 name: docker build and publish
 
 on:
-  push:
+  create:
     tags:
-      - "**"
-    branches:
       - "**"
   workflow_dispatch:
 
