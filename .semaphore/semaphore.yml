@@ -19,7 +19,7 @@ blocks:
         - name: GO111MODULE
           value: 'on'
     run:
-      when: branch = 'main' or branch = 'staging'
+      when: branch = 'main'
   - name: release
     dependencies:
       - test
@@ -35,7 +35,7 @@ blocks:
       secrets:
         - name: GITHUB_TOKEN
     run:
-      when: branch = 'main' or branch = 'staging'
+      when: branch = 'main'
   - name: build image
     dependencies: []
     run:

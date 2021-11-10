@@ -1,8 +1,5 @@
 branches:
   - main
-  - name: staging
-    channel: staging
-    prerelease: dev
 
 tagFormat: "${version}"
 
