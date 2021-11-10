@@ -24,12 +24,11 @@ func newFoohandler(name string, fooCaller fooCaller) http.HandlerFunc {
 		if err != nil {
 			logger.ErrorLogger().Printf("failed to call foo service: %+v\n", err)
 			w.WriteHeader(http.StatusFailedDependency)
-			fmt.Fprint(w, "Hello from "+name+", I failed to contact foo service")
-
+			fmt.Fprintf(w, "[%s] Olá, não consegui falar com o serviço foo", name)
 			return
 		}
 
-		fmt.Fprint(w, "Hello from ["+name+"], here's what foo service said: "+response)
+		fmt.Fprintf(w, "[%s] Olá, aqui está o que o foo disse: %s", name, response)
 	}
 }
 
