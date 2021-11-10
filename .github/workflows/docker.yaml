@@ -1,9 +1,6 @@
 name: docker build and publish
 
 on:
-  create:
-    tags:
-      - "**"
   push:
     tags:
       - "**"

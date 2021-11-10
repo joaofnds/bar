@@ -25,6 +25,8 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
 
       - name: install dependencies
         run: npm install --global semantic-release @semantic-release/changelog @semantic-release/git
@@ -32,4 +34,4 @@ jobs:
       - name: generate release
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
