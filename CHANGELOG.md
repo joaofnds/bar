@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/joaofnds/bar/compare/0.3.0...0.4.0) (2021-11-10)
+
+
+### Features
+
+* change messages to pt-br ([fce9b02](https://github.com/joaofnds/bar/commit/fce9b029ce4b59cd29ba76f819d8abc1a0ad69e8))
+
 # [0.3.0](https://github.com/joaofnds/bar/compare/0.2.0...0.3.0) (2021-11-06)
 
 
