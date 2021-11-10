@@ -34,3 +34,32 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: checkout infra repository
+        uses: actions/checkout@v2
+        with:
+          repository: joaofnds/foobar-infra
+          path: foobar-infra
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: update staging image version
+        uses: fjogeleit/yaml-update-action@master
+        env:
+          VERSION: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+          IMAGE: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+        with:
+          workDir: foobar-infra
+          repository: joaofnds/foobar-infra
+          masterBranchName: main
+          valueFile: bar-staging/deployment.yaml
+          propertyPath: spec.template.spec.containers.0.image
+          value: ${{ env.IMAGE }}
+          updateFile: true
+          commitChange: true
+          branch: deploy/${{ env.VERSION }}
+          message: "chore: update bar-staging image to ${{ env.VERSION }}"
+          createPR: true
+          targetBranch: main
+          title: Bump bar-staging version to ${{ env.VERSION }}
+          labels: chore
+          token: ${{ secrets.GH_TOKEN }}
